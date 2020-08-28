@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 
 namespace AzureKeyVault
@@ -27,24 +28,40 @@ namespace AzureKeyVault
         private void btn_getKvSecret_Click(object sender, EventArgs e)
         {
             txb_kvSecretValue.Text = kvSecret.SecretValue;
-            Size size = TextRenderer.MeasureText(txb_kvSecretValue.Text, txb_kvSecretValue.Font);
-            txb_kvSecretValue.Width = size.Width;
-            txb_kvSecretValue.Height = size.Height;
-        }
+            //size size = textrenderer.measuretext(txb_kvsecretvalue.text, txb_kvsecretvalue.font);
+            //txb_kvsecretvalue.width = size.width;
+            //txb_kvsecretvalue.height = size.height;
+       }
 
         private void btn_kvAllSecrets_Click(object sender, EventArgs e)
         {
-            String resultString = "";
+
+            StringBuilder resultString = new StringBuilder();
             List<string> allSecrets = kvSecret.AllSecrets;
+
             foreach(string secret in allSecrets)
             {
-                resultString += $"{secret}\n";
+                resultString.AppendLine(secret);
             }
 
-            txb_kvSecrets.Text = resultString;
+            txb_kvSecrets.Text = resultString.ToString();
             Size size = TextRenderer.MeasureText(txb_kvSecrets.Text, txb_kvSecrets.Font);
             txb_kvSecrets.Width = size.Width;
             txb_kvSecrets.Height = size.Height;
+        }
+
+        private void btn_cleanSecrets_Click(object sender, EventArgs e)
+        {
+            txb_kvSecrets.Text = "All Secrets";
+            txb_kvSecrets.Width = 100;
+            txb_kvSecrets.Height = 20;
+        }
+
+        private void btn_hideSecretValue_Click(object sender, EventArgs e)
+        {
+            txb_kvSecretValue.Text = "No Input here!";
+            txb_kvSecretValue.Width = 100;
+            txb_kvSecretValue.Height = 20;
         }
     }
 }
