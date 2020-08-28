@@ -1,0 +1,37 @@
+﻿trigger: none
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  buildConfiguration: 'Release'
+  
+jobs:
+- job: Build_NetFrame
+ 
+  steps:
+  
+  - task: NuGetCommand@2
+    displayName: 'Restore NuGet'
+    inputs:
+      command: 'restore'
+      restoreSolution: '**/*.sln'
+      feedsToUse: 'select'
+      
+  - task: MSBuild@1
+    displayName: 'Build solution **/*.sln'
+    inputs:
+      solution: '**/*.sln'
+      configuration: $(BuildConfiguration)
+
+  - task: PowerShell@2
+    displayName: 'Copy Files from bin'
+    inputs:
+      targetType: inline
+      script: |
+        $filesList = Get-ChildItem $Env:Build_SourcesDirectory -Recurse  -filter "bin" -Directory | % { $_.fullname }
+        Write-Host "dll files will be copied from $filesList"
+        Copy-Item -Path $filesList -Destination "$(Build.ArtifactStagingDirectory)\AzureSdk\bin" -Recurse -Verbose
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: drop'
